@@ -217,6 +217,6 @@ module "code-server" {
               "workbench.colorTheme": "Visual Studio Dark",
               "workbench.startupEditor": "none",
               "workbench.tips.enabled": false,
-              "workbench.activityBar.location": "hidden",
+              "workbench.secondarySideBar.defaultVisibility": "hidden",
   }
 }
