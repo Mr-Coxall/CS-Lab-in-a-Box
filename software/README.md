@@ -11,6 +11,13 @@
 
 - will be following this videos process on how to create and manage apps
   - https://www.youtube.com/watch?v=gPL7_tzsJO8&list=PLwcxrRo-VwS13LFkFi1npGRUqiQplfdiX
+- once you have created the dataset, re-set permissions, created the docker-compose.yml file ...
+- goto "Apps", "Discover Apps", the 3 vertial dots, "Install via YAML"
+- then naem the app and use the "include" directive to point to the docker-compose.yml file
+- ```
+  include:
+    - /mnt/storage/gitea/docker-compose.yml
+  ```
 
 ## Check "truenas_admin" user
 
