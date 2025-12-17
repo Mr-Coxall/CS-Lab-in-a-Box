@@ -5,7 +5,9 @@
 - select "Datasets", "Add Dataset", "Name" -> "gitea"
 - goto "System, "Shell"
   - goto "/mnt/storage" and take ownership of directory as "truenas_admin"
-    - sudo chown -R 950:950 /mnt/storage/gitea
+    - ```
+    sudo chown -R 950:950 /mnt/storage/gitea
+    ```
     - go into ./gitea directory
 - use the provided `docker-compose.yml` file to run Gitea with PostgreSQL
   - sudo nano docker-compose.yml
