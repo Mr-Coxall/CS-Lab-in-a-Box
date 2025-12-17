@@ -30,7 +30,7 @@
 - update the docker-compose.yml with the items above
 - use the `docker-compose.yml` file to run Coder
 - start up the container, using the "Apps, Discover Apps, 
-- accout:
+- create an admin accout:
   -  login: coder.admin@ocsb.ca
   -  password: xxx 
 
