@@ -15,8 +15,9 @@
     ```
 - start up the container, using the "Apps, Discover Apps, 
 
-## Settings
+## Settingssudo chmod 644 /mnt/storage/nginx/conf.d/default.conf
+- you will need to place atleast an index.html inside /html
+- also open up the permission
 
-chmod 755 /mnt/storage/Containers/website
-
-find /mnt/poolname/websites -type d -exec chmod a+rx {} \;
+- also will need to provide a default.conf, inside /conf.d
+  - set its permissions to: sudo chmod 644 /mnt/storage/nginx/conf.d/default.conf
