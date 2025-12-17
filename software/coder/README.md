@@ -19,7 +19,17 @@
   - now use the client ID and the secret in the docker-compose.yml for Coder IDE  
 
 ## Coder IDE
-- use docker_compose.yml in this repo from proxmox
+
+- select "Datasets", "Add Dataset", "Name" -> "coder"
+- goto "System, "Shell"
+  - goto "/mnt/storage" and take ownership of directory as "truenas_admin"
+    - ```bash
+      sudo chown -R 950:950 /mnt/storage/coder
+      ```
+    - go into ./coder directory
+- update the docker-compose.yml with the items above
+- use the `docker-compose.yml` file to run Coder
+- start up the container, using the "Apps, Discover Apps, 
 - accout:
   -  login: coder.admin@ocsb.ca
   -  password: xxx 
