@@ -14,7 +14,7 @@
     sudo nano docker-compose.yml
     ```
 - start up the container, using the "Apps, Discover Apps, 
-- - DO NOT try to setup email, since you need 2FA on Gmail to use it
+  - DO NOT try to setup email, since you need 2FA on Gmail to use it
 - the app.ini file for Gitea will be in directory something like:
   - /data/compose/3/gitea/gitea/conf
   ```bash
