@@ -39,7 +39,8 @@
 - by default Coder will assign users like "janesmith", but I want "jane.smith"
 - run the following commands in the LXC terminal (not the container but the linux that holds the container) for the Coder instance:
   ```bash
-  docker exec -it coder-database-1 psql -U username -d coder
+  sudo docker exec -it yyyy psql -U username -d coder
   UPDATE users SET username = 'fred.smith' WHERE username = 'fredsmith';
   ```
   - \q to get out of a psql command
+  - "yyyy" is the container ID for the Coder PSQL container (NOT the Gitea one!)
