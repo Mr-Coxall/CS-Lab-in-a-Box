@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Mount the directory for website content
+      - /mnt/storage/nginx/html:/usr/share/nginx/html:ro
+      # Mount the directory for custom NGINX configuration files
+      - /mnt/storage/nginx/conf.d:/etc/nginx/conf.d:ro
+      # Mount the main NGINX configuration file (optional, if you have a custom one)
+      # - /mnt/storage/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # Mount the directory for NGINX cache (requires write access)
+      - /mnt/storage/nginx/cache:/var/cache/nginx
+      # Mount the directory for NGINX logs (optional, logs can also go to stdout by default)
+      - /mnt/storage/nginx/logs:/var/log/nginx
+    restart: unless-stopped
