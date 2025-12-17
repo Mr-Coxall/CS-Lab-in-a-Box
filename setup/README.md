@@ -3,6 +3,7 @@
 ## BIOS
 
 - ensure "secure boot" is off for TrueNAS Scale
+- ensure "After power loss) is on, so server reboots on power failure
 
 ## Load TrueNAS Scale
 
@@ -13,7 +14,7 @@
 
 ## Startup
 
-Once you can login headless from another computer on network:
+Once you can login (truenas_admin & your password) headless from another computer on network to the TrueNAS instance:
 
 - change the port from 80 & 443, so that these can be used by a local web server:
   - "System, General Settings, GUI: Settings"
@@ -28,14 +29,15 @@ Once you can login headless from another computer on network:
   - select a disk, "Manual Test", "Long Test 
 
 - create a storage pool, to run everything off of
-  - select "Storage, Create Pool (call it storage or something else)
+  - select "Storage, Create Pool (call it "storage" or something else)
   - Data -> Mirror, since you have 2", then select the drives with "width" of 2, since we have 2 drives and 1 VDEV
  
 - create Data Sets
   - "Datasets"
-  - under the "storage" pool just created, add "datasets" 
+  - under the "storage" pool just created, click "Add Dataset"
+  - call it "dataset" and leave as "generic"
 
-- latter on you "might" want to change to a static IP address, so it does not chnage on you!
+- latter on you "might" want to change to a static IP address, so it does not change on you!
   - "Networking", select your NIC, the pencil, unselect "DHCP"
   - select "Aliases, Add" and enter static IP address you know is free and you want to use
     - xxx.xxx.xxx.xxx / 24
