@@ -17,6 +17,7 @@
 - ```
   include:
     - /mnt/storage/gitea/docker-compose.yml
+  services: {}
   ```
 
 ## Check "truenas_admin" user
