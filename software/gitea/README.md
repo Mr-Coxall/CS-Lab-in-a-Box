@@ -28,5 +28,5 @@
   ENABLED = true
   ```
 
-![alt Gitea admin login](./gitea_loggins.png)
+![alt Gitea admin login](./admin_account_setup.png)
 
