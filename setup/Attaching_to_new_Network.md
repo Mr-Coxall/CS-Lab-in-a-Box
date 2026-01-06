@@ -6,5 +6,7 @@ Once you attach to new network:
 - update the IP addresses in docker_copose.yml files as needed:
   - code_runner
   - coder
+  - nginx: change the IP address in the index.html
+  - in Gitea: change the "Application" ip address pointing to Coder, for Gitea Login access
 - reboot again for new IP addresses to take effect in containers
 -  
