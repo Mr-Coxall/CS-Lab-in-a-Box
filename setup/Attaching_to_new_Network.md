@@ -5,6 +5,7 @@ Once you attach to new network:
 - login to TrueNAS web and "reboot" to pickup new settings
 - update the IP addresses in docker_compose.yml files as needed:
   - code_runner
+    - also in terminal under: /mnt/storage/code-runner/data/.runner
   - coder (in 2 places!)
   - nginx: change the IP address in the index.html
   - in Gitea:
