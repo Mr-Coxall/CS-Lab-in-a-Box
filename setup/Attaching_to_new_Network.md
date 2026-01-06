@@ -7,5 +7,7 @@ Once you attach to new network:
   - code_runner
   - coder (in 2 places!)
   - nginx: change the IP address in the index.html
-  - in Gitea: change the "Application" ip address pointing to Coder, for Gitea Login access
+  - in Gitea:
+      - in the GUI change the "Application" ip address pointing to Coder, for Gitea Login access
+      - in the terminal, change the IP address in 3 places in the app.ini file
 - reboot again for new IP addresses to take effect in containers
