@@ -31,7 +31,7 @@ services:
       - "82:80"
     volumes:
       # Mounts the root of your shared storage to allow management
-      - /mnt/storage/apps/:/srv 
+      - /mnt/storage/apps/:/srv
       # Standardized volume path for database/settings
       - /mnt/storage/apps/filebrowser_data:/database
     environment:
@@ -40,7 +40,7 @@ services:
       PGID: 950
     networks:
       - cs-lab-network
-      
+
   # --- Gitea Server Service ---
   gitea-server:
     image: docker.gitea.com/gitea:1.25.2
