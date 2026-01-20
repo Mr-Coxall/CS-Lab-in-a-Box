@@ -35,9 +35,9 @@ services:
       # Standardized volume path for database/settings
       - /mnt/storage/apps/filebrowser_data:/database
     environment:
-      # Update PUID/PGID to match your TrueNAS user if necessary (1000 is common)
-      PUID: 1000
-      PGID: 1000
+      # Update PUID/PGID to match your TrueNAS user: uid=950(truenas_admin)
+      PUID: 950
+      PGID: 950
     networks:
       - cs-lab-network
       
@@ -46,8 +46,9 @@ services:
     image: docker.gitea.com/gitea:1.25.2
     container_name: gitea
     environment:
-      - USER_UID=1000
-      - USER_GID=1000
+      # Update PUID/PGID to match your TrueNAS user: uid=950(truenas_admin)
+      - USER_UID=950
+      - USER_GID=950
       # Update HOST to use the shared network service name for the DB
       - GITEA__database__HOST=postgres-gitea:5432
       # ... other Gitea environment variables from your original file
@@ -143,6 +144,7 @@ services:
   coder:
     image: ghcr.io/coder/coder:v2.28.6
     container_name: coder
+    user: "950:950"  # <--- Change to uid=950(truenas_admin)
     ports:
       - "7080:7080"
     restart: unless-stopped
