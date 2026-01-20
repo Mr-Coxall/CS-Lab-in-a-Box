@@ -1,0 +1,197 @@
+networks:
+  # Define a single custom network for all services to communicate on
+  cs-lab-network:
+    driver: bridge
+
+services:
+
+  # --- NGINX Service ---
+  nginx:
+    image: nginx:1.28.1
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Standardized volume paths to use /mnt/storage/
+      - /mnt/storage/apps/nginx/html:/usr/share/nginx/html:ro
+      - /mnt/storage/apps/nginx/conf.d:/etc/nginx/conf.d:ro
+      - /mnt/storage/apps/nginx/cache:/var/cache/nginx
+      - /mnt/storage/apps/nginx/logs:/var/log/nginx
+    restart: unless-stopped
+    networks:
+      - cs-lab-network
+
+  # --- File Browser Service ---
+  filebrowser:
+    image: filebrowser/filebrowser:v2.55.0-s6
+    container_name: filebrowser
+    restart: unless-stopped
+    ports:
+      - "82:80"
+    volumes:
+      # Mounts the root of your shared storage to allow management
+      - /mnt/storage/apps/:/srv 
+      # Standardized volume path for database/settings
+      - /mnt/storage/apps/filebrowser_data:/database
+    environment:
+      # Update PUID/PGID to match your TrueNAS user if necessary (1000 is common)
+      PUID: 1000
+      PGID: 1000
+    networks:
+      - cs-lab-network
+      
+  # --- Gitea Server Service ---
+  gitea-server:
+    image: docker.gitea.com/gitea:1.25.2
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      # Update HOST to use the shared network service name for the DB
+      - GITEA__database__HOST=postgres-gitea:5432
+      # ... other Gitea environment variables from your original file
+      - GITEA__database__DB_TYPE=postgres
+      - GITEA__database__NAME=gitea
+      - GITEA__database__USER=gitea
+      - GITEA__database__PASSWD=gitea
+      - GITEA__admin__USER_DISABLED_FEATURES=change_username
+      - GITEA__admin__USER_DISABLED_FEATURES=change_full_name
+      - GITEA__service__DISABLE_REGISTRATION=true
+      - GITEA__service__DEFAULT_ALLOW_CREATE_ORGANIZATION=false
+      - GITEA__service__SHOW_REGISTRATION_BUTTON=false
+      - GITEA__service__DEFAULT_USER_VISIBILITY=private
+      - GITEA__service__ALLOWED_USER_VISIBILITY_MODES=private
+      - GITEA__OAUTH2__ENABLED=true
+      - GITEA__openid__ENABLE_OPENID_SIGNIN=false
+      - GITEA__repository__DEFAULT_PRIVATE=true
+      - GITEA__repository__FORCE_PRIVATE=true
+    restart: unless-stopped
+    networks:
+      - cs-lab-network
+    volumes:
+      - /mnt/storage/apps/gitea:/data
+      # Ensure timezone mappings are correct for your system
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "3000:3000"
+      - "222:22"
+    # Depends on the renamed postgres service
+    depends_on:
+      - postgres-gitea
+
+  # --- Gitea PostgreSQL Database ---
+  postgres-gitea:
+    image: docker.io/library/postgres:14
+    container_name: postgres-gitea
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=gitea
+      - POSTGRES_PASSWORD=gitea
+      - POSTGRES_DB=gitea
+    networks:
+      - cs-lab-network
+    volumes:
+      - /mnt/storage/apps/postgres/gitea:/var/lib/postgresql/data # Standardized volume path
+
+  # --- Gitea Action Runners (Runner 01 and 02) ---
+  gitea-runner-01:
+    image: gitea/act_runner:0.2.13
+    container_name: gitea-runner-01
+    restart: unless-stopped
+    environment:
+      # Update URL to use the service name on the shared Docker network
+      GITEA_INSTANCE_URL: "http://gitea-server:3000" # CRITICAL: Update this
+      GITEA_RUNNER_REGISTRATION_TOKEN: "xxxx"        # CRITICAL: Update this token
+      GITEA_RUNNER_NAME: "runner-01"
+      GITEA_RUNNER_LABELS: "ubuntu-latest:docker://ubuntu:22.04"
+      ACT_EXECUTOR: docker
+    volumes:
+      - /mnt/storage/apps/code-runner/data-01:/data:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - cs-lab-network
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 4G
+
+  gitea-runner-02: # Duplicated service
+    image: gitea/act_runner:0.2.13
+    container_name: gitea-runner-02
+    restart: unless-stopped
+    environment:
+      GITEA_INSTANCE_URL: "http://gitea-server:3000" # CRITICAL: Update this
+      GITEA_RUNNER_REGISTRATION_TOKEN: "xxxx"        # CRITICAL: Update this token
+      GITEA_RUNNER_NAME: "runner-02"
+      GITEA_RUNNER_LABELS: "ubuntu-latest:docker://ubuntu:22.04"
+      ACT_EXECUTOR: docker
+    volumes:
+      - /mnt/storage/apps/code-runner/data-02:/data:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - cs-lab-network
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 4G
+
+  # --- Coder IDE Service ---
+  coder:
+    image: ghcr.io/coder/coder:v2.28.6
+    container_name: coder
+    ports:
+      - "7080:7080"
+    restart: unless-stopped
+    environment:
+      # Update connection URL to use the shared network service name
+      CODER_PG_CONNECTION_URL: "postgresql://${POSTGRES_USER:-username}:${POSTGRES_PASSWORD:-password}@postgres-coder/${POSTGRES_DB:-coder}?sslmode=disable"
+      CODER_HTTP_ADDRESS: "0.0.0.0:7080"
+      # Update this URL to point to your TrueNAS IP/Domain on port 7080
+      CODER_ACCESS_URL: "http://xx.xx.xx.xx:7080"       # CRITICAL: Update this 
+      # ... other Coder environment variables from your original file
+      CODER_DANGEROUS_ALLOW_PATH_APP_SITE_OWNER_ACCESS: true
+      CODER_OIDC_ISSUER_URL: "http://xx.xx.xx.xx:3000"  # CRITICAL: Update this
+      CODER_OIDC_EMAIL_DOMAIN: "ocsb.ca,stu.ocsb.ca"
+      CODER_OIDC_CLIENT_ID: "xxxx"                      # CRITICAL: Update this ID
+      CODER_OIDC_CLIENT_SECRET: "yyyy"                  # CRITICAL: Update this Secret
+      CODER_OIDC_SIGN_IN_TEXT: "Sign in with your Gitea Account"
+      CODER_OIDC_ICON_URL: "https://docs.gitea.com/img/gitea.svg"
+      CODER_OAUTH2_GITHUB_DEFAULT_PROVIDER_ENABLE: false
+      CODER_DISABLE_PASSWORD_AUTH: "false"
+    group_add:
+      - "999" # docker group on host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /mnt/storage/apps/coder/home:/home/coder # Standardized volume path
+    depends_on:
+      postgres-coder: # Depends on the renamed postgres service
+        condition: service_healthy
+    networks:
+      - cs-lab-network
+
+  # --- Coder PostgreSQL Database ---
+  postgres-coder:
+    image: "postgres:17"
+    container_name: postgres-coder
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-username}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-coder}
+    volumes:
+      - /mnt/storage/apps/coder/postgres:/var/lib/postgresql/data # Standardized volume path
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-username} -d ${POSTGRES_DB:-coder}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cs-lab-network
