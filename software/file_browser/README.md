@@ -16,4 +16,4 @@ chmod -R 775 /mnt/storage/nginx/html
 The default login is:
 
 Username: admin
-Password: admin
+Password: check the logs, you will see the password there.
