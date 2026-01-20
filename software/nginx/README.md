@@ -17,7 +17,9 @@
 
 ## Settings
 - you will need to place atleast an index.html inside /html
-- also open up the permission
+- also open up the permission:
+
+sudo chmod -R 755 /mnt/storage/apps/nginx/html
+sudo chmod -R 755 /mnt/storage/apps/nginx/conf.d
 
 - also will need to provide a default.conf, inside /conf.d
-  - set its permissions to: sudo chmod 644 /mnt/storage/nginx/conf.d/default.conf
