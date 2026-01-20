@@ -12,3 +12,8 @@
 chown -R 568:568 /mnt/storage/nginx/html
 chmod -R 775 /mnt/storage/nginx/html
 ```
+
+The default login is:
+
+Username: admin
+Password: admin
