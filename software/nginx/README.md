@@ -22,4 +22,4 @@
 sudo chmod -R 755 /mnt/storage/apps/nginx/html
 sudo chmod -R 755 /mnt/storage/apps/nginx/conf.d
 ```
-- also will need to provide a default.conf, inside /conf.d
+- also will need to provide a default.conf file, inside /conf.d directory
