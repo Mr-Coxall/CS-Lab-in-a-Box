@@ -17,3 +17,21 @@ The default login is:
 
 Username: admin
 Password: check the logs, you will see the password there. It only shows up the 1st time the container is made, so ENSURE you get it and then change the password!
+
+## FileBrowser to change Nginx Web Server
+
+To get to file manager:
+http://172.22.52.50:30051
+
+Login: admin
+Password: ...
+
+After a change:
+- in TrueNAS web UI: http://172.22.52.50:81/
+Login: truenas_admin
+Password: ...
+
+- goto shell, /mnt/storage/nginx/html
+- run these commands:
+sudo chmod 777 -R *.*
+sudo chown truenas_admin -R *.*
